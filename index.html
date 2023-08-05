@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nmap Command Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333333;
+        }
+
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333333;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script>
+        function generateCommand() {
+            var scanType = document.querySelector('input[name="scanType"]:checked').value;
+            var ipAddress = document.getElementById("ipAddress").value;
+            var ports = document.getElementById("ports").value;
+            var timing = document.getElementById("timing").value;
+            var detection = document.getElementById("detection").value;
+            var scriptScan = document.getElementById("scriptScan").value;
+
+            var command = "nmap -" + scanType + " ";
+
+            if (ipAddress.toLowerCase() !== "all") {
+                command += ipAddress + " ";
+            }
+            if (ports === "") 
+{
+        	alert("The ports to scan cannot be empty!");
+            return;
+}
+        
+            if (ports.toLowerCase() === "all") {
+                command += "-p- ";
+            } else if (ports.toLowerCase() === "common") {
+                command += "-F ";
+            } else {
+                command += "-p " + ports + " ";
+            }
+
+            if (timing !== "Default") {
+                command += "-T" + timing + " ";
+            }
+
+            command += detection + " ";
+
+            if (scriptScan !== "none") {
+                command += "--script=" + scriptScan + " ";
+            }
+
+            document.getElementById("commandOutput").value = command;
+        }
+
+        function copyCommand() {
+            var commandOutput = document.getElementById("commandOutput");
+            commandOutput.select();
+            commandOutput.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            alert("Komut kopyalandı: " + commandOutput.value);
+        }
+
+       
+        
+    </script>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Nmap Command Generator</h1>
+
+        <label>Scan Type:</label>
+        <input type="radio" name="scanType" value="sS" checked> TCP SYN Scan<br>
+        <input type="radio" name="scanType" value="sT"> TCP Connect Scan<br>
+        <input type="radio" name="scanType" value="sU"> UDP Scan<br>
+        <input type="radio" name="scanType" value="sA"> ACK Scan<br>
+        <input type="radio" name="scanType" value="sF"> FIN Scan<br>
+        <input type="radio" name="scanType" value="sX"> Xmas Scan<br>
+        <input type="radio" name="scanType" value="sN"> NULL Scan<br>
+        <input type="radio" name="scanType" value="sW"> Window Scan<br>
+        <input type="radio" name="scanType" value="sM"> Maimon Scan<br><br>
+
+        <label for="ipAddress">IP Address or Domain Name:</label>
+        <input type="text" id="ipAddress" placeholder="Example: 192.168.0.1 or example.com"><br><br>
+
+        <label for="ports">Ports to Scan:</label>
+        <input type="text" id="ports" value="" placeholder="Example: 80, common or all"><br><br>
+
+        <label for="timing">Timing Setting:</label>
+        <select id="timing">
+            <option value="0">0 (Paranoid)</option>
+            <option value="1">1 (Slow)</option>
+            <option value="2">2 (Polite)</option>
+            <option value="3">3 (Normal)</option>
+            <option value="4">4 (Aggressive)</option>
+            <option value="5">5 (Insane)</option>
+        </select><br><br>
+
+        <label for="detection">Detection:</label>
+        <select id="detection">
+            <option value="-O">Operating System Discovery</option>
+            <option value="-sV"> Service and Version Discovery </option>
+            <option value="-A">Both</option>
+        </select><br><br>
+
+        <label for="scriptScan">Script Scanning:</label>
+        <select id="scriptScan">
+            <option value="none"></option>
+            <option value="auth">Script: auth</option>
+            <option value="broadcast">Script: broadcast</option>
+            <option value="brute">Script: brute</option>
+            <option value="default">Script: default</option>
+            <option value="discovery">Script: discovery</option>
+            <option value="dos">Script: dos</option>
+            <option value="exploit">Script: exploit</option>
+            <option value="external">Script: external</option>
+            <option value="fuzzer">Script: fuzzer</option>
+            <option value="intrusive">Script: intrusive</option>
+            <option value="malware">Script: malware</option>
+            <option value="safe">Script: safe</option>
+            <option value="version">Script: version</option>
+            <option value="vuln">Script: vuln</option>
+        </select><br><br>
+
+        <button onclick="generateCommand()">Generate Command</button>
+       
+
+        <label for="commandOutput">Command:</label>
+        <textarea id="commandOutput" readonly></textarea><br><br>
+
+        <button onclick="copyCommand()">Copy Command</button>
+    </div>
+</body>
+</html>
